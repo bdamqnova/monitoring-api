@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="layout">
+    <aside>
+        <h2>The Knowledge Hub</h2>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/containers">Containers</a>
+        <a href="/alerts">Alerts</a>
+        <a href="/logout">Logout</a>
+    </aside>
+
+    <main>
+        <h1>Dashboard</h1>
+        <p>Overview of system health and performance</p>
+        <p id="last-updated"></p>
+
+        <div class="cards">
+            <div class="card">
+                <h3>System Status</h3>
+                <p id="system-status">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>CPU Usage</h3>
+                <p><span id="cpu"></span>%</p>
+            </div>
+            <div class="card">
+                <h3>Memory Usage</h3>
+                <p><span id="memory"></span>%</p>
+            </div>
+            <div class="card">
+                <h3>Disk Usage</h3>
+                <p><span id="disk"></span>%</p>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

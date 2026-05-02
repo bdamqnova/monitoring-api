@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #0f172a;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0b2d5c, #0067d8);
+}
+
+.login-card {
+    background: white;
+    padding: 50px;
+    width: 430px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+}
+
+.login-card h1 {
+    margin-bottom: 5px;
+    color: #0b2d5c;
+}
+
+.login-card h2 {
+    margin-top: 0;
+    color: #334155;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 20px;
+    background: #0067d8;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.button:hover {
+    background: #0055b8;
+}
+
+.small-text {
+    margin-top: 25px;
+    color: #64748b;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+aside {
+    width: 240px;
+    background: #0b2d5c;
+    color: white;
+    padding: 25px;
+}
+
+aside h2 {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+aside a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 13px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+aside a:hover {
+    background: #1d4ed8;
+}
+
+main {
+    flex: 1;
+    padding: 40px;
+}
+
+main h1 {
+    margin-bottom: 5px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+.card p {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    margin-top: 25px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+th, td {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+th {
+    background: #f8fafc;
+    color: #334155;
+}
+
+tr:hover {
+    background: #f8fafc;
+}

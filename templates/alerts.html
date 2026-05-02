@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="layout">
+    <aside>
+        <h2>The Knowledge Hub</h2>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/containers">Containers</a>
+        <a href="/alerts">Alerts</a>
+        
+        <a href="/logout">Logout</a>
+    </aside>
+
+    <main>
+        <h1>Alerts</h1>
+        <p>View and monitor system alerts and notifications</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Message</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="alerts-table"></tbody>
+        </table>
+    </main>
+</div>
+{% endblock %}

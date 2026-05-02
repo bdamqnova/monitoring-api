@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "spaincentral"
+    },
+    "webAppName": {
+      "value": "app-monitoring-es-iac"
+    },
+    "appServicePlanName": {
+      "value": "asp-monitoring-es-iac"
+    },
+    "appServiceSku": {
+      "value": "B1"
+    },
+    "postgresServerName": {
+      "value": "pg-monitoring-es-iac"
+    },
+    "dbAdminUser": {
+      "value": "pgadminbisera"
+    },
+    "dbAdminPassword": {
+      "value": "ReplaceWithSecurePassword123!"
+    },
+    "appPrivateEndpointSubnetId": {
+      "value": "/subscriptions/e62b2d46-5a71-4a39-b2f3-8261c5fbf6e4/resourceGroups/rg-library-hybrid-es/providers/Microsoft.Network/virtualNetworks/App-Spoke-VNet-ES/subnets/App-PrivateEndpoint-Subnet"
+    },
+    "dbPrivateEndpointSubnetId": {
+      "value": "/subscriptions/e62b2d46-5a71-4a39-b2f3-8261c5fbf6e4/resourceGroups/rg-library-hybrid-es/providers/Microsoft.Network/virtualNetworks/Monitoring-Spoke-VNet-ES/subnets/Monitoring-PrivateEndpoint-Subnet"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="layout">
+    <aside>
+        <h2>The Knowledge Hub</h2>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/containers">Containers</a>
+        <a href="/alerts">Alerts</a>
+        <a href="/logout">Logout</a>
+    </aside>
+
+    <main>
+        <h1>Containers</h1>
+        <p>Monitor container status and resource usage</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Container Name</th>
+                    <th>Status</th>
+                    <th>CPU Usage</th>
+                    <th>Memory Usage</th>
+                    <th>Uptime</th>
+                </tr>
+            </thead>
+            <tbody id="containers-table"></tbody>
+        </table>
+    </main>
+</div>
+{% endblock %}
