@@ -39,6 +39,19 @@ DB_PORT = os.getenv("DB_PORT", "5432")
 USE_DATABASE = False
 
 
+def get_redirect_uri():
+    """
+    Local Flask uses http://localhost:5000/getAToken.
+    Azure Container Apps must use https://.../getAToken.
+    """
+    app_base_url = os.getenv("APP_BASE_URL")
+
+    if app_base_url:
+        return app_base_url.rstrip("/") + REDIRECT_PATH
+
+    return url_for("authorized", _external=True)
+
+
 def build_msal_app():
     return msal.ConfidentialClientApplication(
         CLIENT_ID,
@@ -99,10 +112,13 @@ def health():
 
 @app.route("/login")
 def login():
+    redirect_uri = get_redirect_uri()
+
     auth_url = build_msal_app().get_authorization_request_url(
         scopes=SCOPE,
-        redirect_uri=url_for("authorized", _external=True)
+        redirect_uri=redirect_uri
     )
+
     return redirect(auth_url)
 
 
@@ -111,10 +127,12 @@ def authorized():
     if not request.args.get("code"):
         return "Login failed: no authorization code received"
 
+    redirect_uri = get_redirect_uri()
+
     result = build_msal_app().acquire_token_by_authorization_code(
         request.args["code"],
         scopes=SCOPE,
-        redirect_uri=url_for("authorized", _external=True)
+        redirect_uri=redirect_uri
     )
 
     if "id_token_claims" in result:
@@ -145,9 +163,16 @@ def alerts():
 @app.route("/logout")
 def logout():
     session.clear()
+
+    post_logout_url = os.getenv("APP_BASE_URL")
+    if post_logout_url:
+        post_logout_url = post_logout_url.rstrip() + "/login"
+    else:
+        post_logout_url = url_for("login", _external=True)
+
     return redirect(
         f"{AUTHORITY}/oauth2/v2.0/logout"
-        f"?post_logout_redirect_uri={url_for('login', _external=True)}"
+        f"?post_logout_redirect_uri={post_logout_url}"
     )
 
 
@@ -235,6 +260,7 @@ def get_metrics():
         conn.close()
 
         result = []
+
         for row in rows:
             result.append({
                 "id": row[0],
