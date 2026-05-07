@@ -1,12 +1,26 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import logging
+import msal
 import os
 import psycopg2
+from dotenv import load_dotenv
 from datetime import datetime
+from functools import wraps
+
 
 app = Flask(__name__)
+load_dotenv()
+
 app.config["JSON_SORT_KEYS"] = False
-app.secret_key = "temporary-secret-key"
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "temporary-secret-key")
+
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+TENANT_ID = os.getenv("TENANT_ID")
+REDIRECT_PATH = os.getenv("REDIRECT_PATH", "/getAToken")
+
+AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
+SCOPE = ["User.Read"]
 
 os.makedirs("logs", exist_ok=True)
 
@@ -23,6 +37,23 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_PORT = os.getenv("DB_PORT", "5432")
 
 USE_DATABASE = False
+
+
+def build_msal_app():
+    return msal.ConfidentialClientApplication(
+        CLIENT_ID,
+        authority=AUTHORITY,
+        client_credential=CLIENT_SECRET
+    )
+
+
+def login_required(route):
+    @wraps(route)
+    def wrapper(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        return route(*args, **kwargs)
+    return wrapper
 
 
 def get_connection():
@@ -58,7 +89,7 @@ def create_table():
 
 @app.route("/")
 def home():
-    return redirect(url_for("login"))
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/health")
@@ -68,35 +99,56 @@ def health():
 
 @app.route("/login")
 def login():
-    session["user"] = "demo-user"
-    return render_template("login.html")
+    auth_url = build_msal_app().get_authorization_request_url(
+        scopes=SCOPE,
+        redirect_uri=url_for("authorized", _external=True)
+    )
+    return redirect(auth_url)
+
+
+@app.route(REDIRECT_PATH)
+def authorized():
+    if not request.args.get("code"):
+        return "Login failed: no authorization code received"
+
+    result = build_msal_app().acquire_token_by_authorization_code(
+        request.args["code"],
+        scopes=SCOPE,
+        redirect_uri=url_for("authorized", _external=True)
+    )
+
+    if "id_token_claims" in result:
+        session["user"] = result["id_token_claims"]
+        return redirect(url_for("dashboard"))
+
+    return "Login failed: " + str(result.get("error_description"))
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
-    if "user" not in session:
-        return redirect(url_for("login"))
     return render_template("dashboard.html")
 
 
 @app.route("/containers")
+@login_required
 def containers():
-    if "user" not in session:
-        return redirect(url_for("login"))
     return render_template("containers.html")
 
 
 @app.route("/alerts")
+@login_required
 def alerts():
-    if "user" not in session:
-        return redirect(url_for("login"))
     return render_template("alerts.html")
 
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(
+        f"{AUTHORITY}/oauth2/v2.0/logout"
+        f"?post_logout_redirect_uri={url_for('login', _external=True)}"
+    )
 
 
 @app.route("/api/metrics", methods=["POST"])
